@@ -1,13 +1,11 @@
 ﻿using AlgoritmikAPI_ClassApp.DTO;
 using AlgoritmikAPI_ClassApp.Interface;
 using AlgoritmikAPI_ClassApp.Models;
-using EmailService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using MimeKit;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -23,13 +21,11 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
         public IConfiguration _configuration;
         readonly DatabaseContext _dbContext = new();
-        private readonly IEmailSender _emailSender;
 
-        public AccountController(IConfiguration config, DatabaseContext context, IEmailSender emlsender)
+        public AccountController(IConfiguration config, DatabaseContext context)
         {
             _configuration = config;
             _dbContext = context;
-            _emailSender = emlsender;
 
         }
         public string CreateToken(UserInfo user)
@@ -107,22 +103,6 @@ namespace AlgoritmikAPI_ClassApp.Controllers
             return userDto;
         }
 
-        [HttpGet("sendmail")]
-        public async Task<ActionResult<Student>> SendMail()
-        {
-            var rng = new Random();
-            var message = new Message(new string[] { "codemazetest@mailinator.com" }, "Test mail with Attachments", "This is the content from our mail with attachments.");
-            message.To = new List<MailboxAddress> { new MailboxAddress("Burakhan", "burakhan_gogce@hotmail.com") };
-            message.Content = "denemeee";
-            message.Subject = "denemeee";
-            await _emailSender.SendEmailAsync(message);
-
-
-
-            return Ok();
-        }
-
-       
 
         private async Task<bool> UserExists(string username)
         {

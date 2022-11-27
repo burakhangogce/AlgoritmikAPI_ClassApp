@@ -1,7 +1,6 @@
 using AlgoritmikAPI_ClassApp.Interface;
 using AlgoritmikAPI_ClassApp.Models;
 using AlgoritmikAPI_ClassApp.Repository;
-using EmailService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +20,7 @@ builder.Services.AddTransient<IReport, ReportRepository>();
 builder.Services.AddTransient<IMyClass, MyClassRepository>();
 builder.Services.AddTransient<IHomeWork, HomeWorkRepository>();
 builder.Services.AddTransient<IPerformance, PerformanceRepository>();
+builder.Services.AddTransient<IDiet,DietRepository>();
 builder.Services.AddControllers();
 builder.Services.Configure<IdentityOptions>(opts =>
 {
@@ -44,11 +44,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
 });
-var emailConfig = builder.Configuration
-        .GetSection("EmailConfiguration")
-        .Get<EmailConfiguration>();
-builder.Services.AddScoped<IEmailSender, EmailSender>();
-builder.Services.AddSingleton(emailConfig);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

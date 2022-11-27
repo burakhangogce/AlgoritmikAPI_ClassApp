@@ -19,6 +19,9 @@ namespace AlgoritmikAPI_ClassApp.Models
         public virtual DbSet<Report>? Reports { get; set; }
         public virtual DbSet<Performance>? Performances { get; set; }
         public virtual DbSet<HomeWork>? HomeWorks { get; set; }
+        public virtual DbSet<DietModel>? Diets { get; set; }
+        public virtual DbSet<DietDayModel>? DietDays { get; set; }
+        public virtual DbSet<DietMenuModel>? DietMenus { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -80,10 +83,32 @@ namespace AlgoritmikAPI_ClassApp.Models
                 entity.Property(e => e.performanceStudentId).IsUnicode(false);
                 entity.Property(e => e.performanceDate).IsUnicode(false);
             });
-
-
-
-
+            modelBuilder.Entity<DietModel>(entity =>
+            {
+                entity.ToTable("Diets");
+                entity.Property(e => e.dietId).HasColumnName("dietId");
+                entity.Property(e => e.clientId).IsUnicode(false);
+                entity.Property(e => e.dietTitle).IsUnicode(false);
+                entity.Property(e => e.dietStartDate).IsUnicode(false);
+                entity.Property(e => e.dietEndDate).IsUnicode(false);
+            });
+            modelBuilder.Entity<DietDayModel>(entity =>
+            {
+                entity.ToTable("DietDays");
+                entity.Property(e => e.dietDayId).HasColumnName("dietDayId");
+                entity.Property(e => e.dietId).IsUnicode(false);
+                entity.Property(e => e.dietTime).IsUnicode(false);
+            });
+            modelBuilder.Entity<DietMenuModel>(entity =>
+            {
+                entity.ToTable("DietDayMenus");
+                entity.Property(e => e.dietDayId).IsUnicode(false);
+                entity.Property(e => e.dietMenuTitle).IsUnicode(false);
+                entity.Property(e => e.dietMenuDetail).IsUnicode(false);
+                entity.Property(e => e.dietMenuTime).IsUnicode(false);
+                entity.Property(e => e.isNotification).IsUnicode(false);
+                entity.Property(e => e.isCompleted).IsUnicode(false);
+            });
             OnModelCreatingPartial(modelBuilder);
         }
 
