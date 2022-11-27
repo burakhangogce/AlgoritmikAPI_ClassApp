@@ -7,10 +7,11 @@ namespace AlgoritmikAPI_ClassApp.Models
     {
         [Key]
         public int dietDayId { get; set; }
-         [ForeignKey("dietId")]
         public int dietId { get; set; }
-        public DateTime dietTime { get; set; }
-        public List<DietMenuModel> dietMenus { get; set; }
+        public DateTime? dietTime { get; set; }
+        public virtual List<DietMenuModel> dietMenus { get; set; }
+        [ForeignKey("dietId")]
+        public virtual DietModel? dietModel { get; set; }
 
     }
 }

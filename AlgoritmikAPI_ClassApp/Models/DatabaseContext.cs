@@ -87,28 +87,40 @@ namespace AlgoritmikAPI_ClassApp.Models
             {
                 entity.ToTable("Diets");
                 entity.Property(e => e.dietId).HasColumnName("dietId");
-                entity.Property(e => e.clientId).IsUnicode(false);
+                entity.Property(e => e.clientId).HasColumnName("clientId");
                 entity.Property(e => e.dietTitle).IsUnicode(false);
                 entity.Property(e => e.dietStartDate).IsUnicode(false);
                 entity.Property(e => e.dietEndDate).IsUnicode(false);
             });
+
+
             modelBuilder.Entity<DietDayModel>(entity =>
             {
                 entity.ToTable("DietDays");
                 entity.Property(e => e.dietDayId).HasColumnName("dietDayId");
-                entity.Property(e => e.dietId).IsUnicode(false);
-                entity.Property(e => e.dietTime).IsUnicode(false);
+                entity.Property(e => e.dietId).HasColumnName("dietId");
+                entity.Property(e => e.dietTime).HasColumnName("dietTime");
             });
+
             modelBuilder.Entity<DietMenuModel>(entity =>
             {
                 entity.ToTable("DietDayMenus");
-                entity.Property(e => e.dietDayId).IsUnicode(false);
+                entity.Property(e => e.dietDayId).HasColumnName("dietDayId");
+                entity.Property(e => e.dietMenuId).IsUnicode(false);
                 entity.Property(e => e.dietMenuTitle).IsUnicode(false);
                 entity.Property(e => e.dietMenuDetail).IsUnicode(false);
                 entity.Property(e => e.dietMenuTime).IsUnicode(false);
                 entity.Property(e => e.isNotification).IsUnicode(false);
                 entity.Property(e => e.isCompleted).IsUnicode(false);
             });
+            modelBuilder.Entity<DietModel>().Property(p => p.dietId).ValueGeneratedOnAdd();
+            modelBuilder.Entity<DietDayModel>().Property(p => p.dietDayId).ValueGeneratedOnAdd();
+            modelBuilder.Entity<DietMenuModel>().Property(p => p.dietMenuId).ValueGeneratedOnAdd();
+
+
+
+
+
             OnModelCreatingPartial(modelBuilder);
         }
 

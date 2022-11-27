@@ -30,6 +30,11 @@ builder.Services.Configure<IdentityOptions>(opts =>
     opts.Password.RequireUppercase = false;
     opts.User.RequireUniqueEmail = true;
 });
+builder.Services.AddMvc()
+             .AddJsonOptions(opt =>
+             {
+                 opt.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+             });
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.RequireHttpsMetadata = false;

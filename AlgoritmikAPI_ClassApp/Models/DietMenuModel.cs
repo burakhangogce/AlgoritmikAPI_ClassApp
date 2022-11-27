@@ -11,8 +11,10 @@ namespace AlgoritmikAPI_ClassApp.Models
         public int dietDayId { get; set; }
         public string dietMenuTitle { get; set; }
         public string dietMenuDetail { get; set; }
-        public DateTime dietMenuTime { get; set; }
+        public DateTime? dietMenuTime { get; set; }
         public bool isNotification { get; set; }
         public bool isCompleted { get; set; }
+        [ForeignKey("dietDayId")]
+        public virtual DietDayModel? dietDayModel { get; set; }
     }
 }

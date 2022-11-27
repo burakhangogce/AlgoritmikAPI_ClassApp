@@ -22,16 +22,15 @@ namespace AlgoritmikAPI_ClassApp.Repository
                 if (dietModel != null)
                 {
                     List<DietDayModel> dietDayList = _dbContext.DietDays!.Where(x => x.dietId.Equals(id)).ToList();
-
                     if (dietDayList != null)
                     {
                         for (int i = 0; i < dietDayList.Count; i++)
                         {
-                            List<DietMenuModel> dietDayMenuList = _dbContext.DietMenus.Where(x => x.dietDayId.Equals(dietDayList[i].dietDayId)).ToList();
+                            List<DietMenuModel> dietDayMenuList = _dbContext.DietMenus!.Where(x => x.dietDayId.Equals(dietDayList[i].dietDayId)).ToList();
                             dietDayList[i].dietMenus = dietDayMenuList;
                         }
                     }
-                    dietModel.dietDayModel.Add(dietDayList!);
+                    dietModel.dietDayModel = dietDayList!;
                     return dietModel;
                 }
                 else
@@ -50,7 +49,8 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                _dbContext.Diets.Add(dietModel);
+                DietModel diet= new DietModel();    
+                _dbContext.Diets!.Add(diet);
                 _dbContext.SaveChanges();
             }
             catch
