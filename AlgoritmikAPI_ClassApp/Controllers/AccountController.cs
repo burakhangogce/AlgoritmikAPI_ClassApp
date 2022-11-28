@@ -70,7 +70,7 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
             };
 
-            _dbContext.UserInfos!.Add(user);
+            _dbContext.UserInfo!.Add(user);
             await _dbContext.SaveChangesAsync();
 
             var userDto = new UserDto
@@ -87,7 +87,7 @@ namespace AlgoritmikAPI_ClassApp.Controllers
         public async Task<ActionResult<UserDto>> Login(LoginDTO loginDto)
         {
             
-            var user = await _dbContext.UserInfos!
+            var user = await _dbContext.UserInfo!
                 .SingleOrDefaultAsync(x => x.UserName == loginDto.Username);
 
             if (user == null) return Unauthorized("Invalid UserName");
@@ -106,7 +106,7 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
         private async Task<bool> UserExists(string username)
         {
-            return await _dbContext.UserInfos!.AnyAsync(x => x.UserName == username.ToLower());
+            return await _dbContext.UserInfo!.AnyAsync(x => x.UserName == username.ToLower());
         }
 
     }

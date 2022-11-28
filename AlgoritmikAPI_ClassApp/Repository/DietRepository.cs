@@ -26,7 +26,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
                     {
                         for (int i = 0; i < dietDayList.Count; i++)
                         {
-                            List<DietMenuModel> dietDayMenuList = _dbContext.DietMenus!.Where(x => x.dietDayId.Equals(dietDayList[i].dietDayId)).ToList();
+                            List<DietMenuModel> dietDayMenuList = _dbContext.DietDayMenus!.Where(x => x.dietDayId.Equals(dietDayList[i].dietDayId)).ToList();
                             dietDayList[i].dietMenus = dietDayMenuList;
                         }
                     }

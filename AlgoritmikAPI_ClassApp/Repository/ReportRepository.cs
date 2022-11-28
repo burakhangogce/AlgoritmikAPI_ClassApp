@@ -17,7 +17,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                return _dbContext.Reports.ToList();
+                return _dbContext.Report.ToList();
             }
             catch
             {
@@ -29,7 +29,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                Report? report = _dbContext.Reports.Find(id);
+                Report? report = _dbContext.Report.Find(id);
                 if (report != null)
                 {
                     return report;
@@ -49,7 +49,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                _dbContext.Reports.Add(report);
+                _dbContext.Report.Add(report);
                 _dbContext.SaveChanges();
             }
             catch
@@ -75,11 +75,11 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                Report? report = _dbContext.Reports.Find(id);
+                Report? report = _dbContext.Report.Find(id);
 
                 if (report != null)
                 {
-                    _dbContext.Reports.Remove(report);
+                    _dbContext.Report.Remove(report);
                     _dbContext.SaveChanges();
                     return report;
                 }
@@ -96,7 +96,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
 
         public bool CheckReport(int id)
         {
-            return _dbContext.Reports.Any(e => e.reportId == id);
+            return _dbContext.Report.Any(e => e.reportId == id);
         }
     }
 }

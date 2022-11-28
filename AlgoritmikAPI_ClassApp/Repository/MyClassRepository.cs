@@ -17,7 +17,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                return _dbContext.MyClasses.ToList();
+                return _dbContext.MyClass.ToList();
             }
             catch
             {
@@ -29,7 +29,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                MyClass? myclass = _dbContext.MyClasses.Find(id);
+                MyClass? myclass = _dbContext.MyClass.Find(id);
                 if (myclass != null)
                 {
                     return myclass;
@@ -49,7 +49,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                _dbContext.MyClasses.Add(myclass);
+                _dbContext.MyClass.Add(myclass);
                 _dbContext.SaveChanges();
             }
             catch
@@ -75,11 +75,11 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                MyClass? myclass = _dbContext.MyClasses.Find(id);
+                MyClass? myclass = _dbContext.MyClass.Find(id);
 
                 if (myclass != null)
                 {
-                    _dbContext.MyClasses.Remove(myclass);
+                    _dbContext.MyClass.Remove(myclass);
                     _dbContext.SaveChanges();
                     return myclass;
                 }
@@ -96,7 +96,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
 
         public bool CheckMyClass(int id)
         {
-            return _dbContext.MyClasses.Any(e => e.classId == id);
+            return _dbContext.MyClass.Any(e => e.classId == id);
         }
     }
 }

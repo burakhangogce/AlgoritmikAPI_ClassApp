@@ -66,7 +66,7 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
         private async Task<UserInfo> GetUser(string email, string password)
         {
-            return await _context.UserInfos.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
+            return await _context.UserInfo.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
         }
     }
 }

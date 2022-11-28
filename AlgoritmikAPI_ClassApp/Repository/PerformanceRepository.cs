@@ -17,7 +17,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                return _dbContext.Performances.ToList();
+                return _dbContext.Performance.ToList();
             }
             catch
             {
@@ -29,7 +29,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                Performance? performance = _dbContext.Performances.Find(id);
+                Performance? performance = _dbContext.Performance.Find(id);
                 if (performance != null)
                 {
                     return performance;
@@ -49,7 +49,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                _dbContext.Performances.Add(performance);
+                _dbContext.Performance.Add(performance);
                 _dbContext.SaveChanges();
             }
             catch
@@ -75,11 +75,11 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                Performance? performance = _dbContext.Performances.Find(id);
+                Performance? performance = _dbContext.Performance.Find(id);
 
                 if (performance != null)
                 {
-                    _dbContext.Performances.Remove(performance);
+                    _dbContext.Performance.Remove(performance);
                     _dbContext.SaveChanges();
                     return performance;
                 }
@@ -96,7 +96,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
 
         public bool CheckPerformance(int id)
         {
-            return _dbContext.Performances.Any(e => e.performanceId == id);
+            return _dbContext.Performance.Any(e => e.performanceId == id);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                return _dbContext.Students.ToList();
+                return _dbContext.Student.ToList();
             }
             catch
             {
@@ -29,7 +29,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                return _dbContext.Students.Where(x => x.studentClassId.Equals(classId)).ToList();
+                return _dbContext.Student.Where(x => x.studentClassId.Equals(classId)).ToList();
             }
             catch
             {
@@ -41,7 +41,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                return _dbContext.Students.Where(x => x.studentTeacherId.Equals(teacherId)).ToList();
+                return _dbContext.Student.Where(x => x.studentTeacherId.Equals(teacherId)).ToList();
             }
             catch
             {
@@ -53,7 +53,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                Student? student = _dbContext.Students.Find(id);
+                Student? student = _dbContext.Student.Find(id);
                 if (student != null)
                 {
                     return student;
@@ -73,7 +73,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                _dbContext.Students.Add(student);
+                _dbContext.Student.Add(student);
                 _dbContext.SaveChanges();
             }
             catch
@@ -99,11 +99,11 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                Student? student = _dbContext.Students.Find(id);
+                Student? student = _dbContext.Student.Find(id);
 
                 if (student != null)
                 {
-                    _dbContext.Students.Remove(student);
+                    _dbContext.Student.Remove(student);
                     _dbContext.SaveChanges();
                     return student;
                 }
@@ -120,7 +120,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
 
         public bool CheckStudent(int id)
         {
-            return _dbContext.Students.Any(e => e.studentId == id);
+            return _dbContext.Student.Any(e => e.studentId == id);
         }
     }
 }

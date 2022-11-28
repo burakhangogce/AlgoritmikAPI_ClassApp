@@ -17,7 +17,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                return _dbContext.HomeWorks.ToList();
+                return _dbContext.HomeWork.ToList();
             }
             catch
             {
@@ -29,7 +29,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                HomeWork? homeWork = _dbContext.HomeWorks.Find(id);
+                HomeWork? homeWork = _dbContext.HomeWork.Find(id);
                 if (homeWork != null)
                 {
                     return homeWork;
@@ -49,7 +49,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                _dbContext.HomeWorks.Add(homeWork);
+                _dbContext.HomeWork.Add(homeWork);
                 _dbContext.SaveChanges();
             }
             catch
@@ -75,11 +75,11 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                HomeWork? homeWork = _dbContext.HomeWorks.Find(id);
+                HomeWork? homeWork = _dbContext.HomeWork.Find(id);
 
                 if (homeWork != null)
                 {
-                    _dbContext.HomeWorks.Remove(homeWork);
+                    _dbContext.HomeWork.Remove(homeWork);
                     _dbContext.SaveChanges();
                     return homeWork;
                 }
@@ -96,7 +96,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
 
         public bool CheckHomeWork(int id)
         {
-            return _dbContext.HomeWorks.Any(e => e.homeWorkId == id);
+            return _dbContext.HomeWork.Any(e => e.homeWorkId == id);
         }
     }
 }
