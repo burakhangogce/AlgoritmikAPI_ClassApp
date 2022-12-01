@@ -40,7 +40,7 @@ namespace AlgoritmikAPI_ClassApp.Controllers
             return await Task.FromResult(diet);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("update/{id}")]
         public async Task<ActionResult<DietModel>> Put(int id, DietModel dietModel)
         {
             if (id != dietModel.dietId)

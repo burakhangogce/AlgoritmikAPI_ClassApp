@@ -22,6 +22,9 @@ namespace AlgoritmikAPI_ClassApp.Models
         public virtual DbSet<DietModel>? Diets { get; set; }
         public virtual DbSet<DietDayModel>? DietDays { get; set; }
         public virtual DbSet<DietMenuModel>? DietDayMenus { get; set; }
+        public virtual DbSet<RecipeModel>? Recipe { get; set; }
+        public virtual DbSet<NutritionistModel>? Nutritionist { get; set; }
+        public virtual DbSet<ClientModel>? Client { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

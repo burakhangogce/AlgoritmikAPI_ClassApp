@@ -49,8 +49,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                DietModel diet= new DietModel();    
-                _dbContext.Diets!.Add(diet);
+                _dbContext.Diets!.AddRange(dietModel);
                 _dbContext.SaveChanges();
             }
             catch
@@ -63,7 +62,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                _dbContext.Entry(dietModel).State = EntityState.Modified;
+                _dbContext.Diets!.UpdateRange(dietModel);
                 _dbContext.SaveChanges();
             }
             catch

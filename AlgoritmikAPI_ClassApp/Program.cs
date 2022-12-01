@@ -21,6 +21,9 @@ builder.Services.AddTransient<IMyClass, MyClassRepository>();
 builder.Services.AddTransient<IHomeWork, HomeWorkRepository>();
 builder.Services.AddTransient<IPerformance, PerformanceRepository>();
 builder.Services.AddTransient<IDiet,DietRepository>();
+builder.Services.AddTransient<INutritionist,NutritionistRepository>();
+builder.Services.AddTransient<IClient,ClientRepository>();
+builder.Services.AddTransient<IRecipe,RecipeRepository>();
 builder.Services.AddControllers();
 builder.Services.Configure<IdentityOptions>(opts =>
 {
