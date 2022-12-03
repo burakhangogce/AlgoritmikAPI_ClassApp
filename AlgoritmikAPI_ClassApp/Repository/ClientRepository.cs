@@ -35,6 +35,27 @@ namespace AlgoritmikAPI_ClassApp.Repository
             }
         }
 
+        public List<ClientModel> GetMyClients(int id)
+        {
+            try
+            {
+                List<ClientModel> clientList = _dbContext.Client!.Where(x => x.nutritionistId.Equals(id)).ToList();
+
+                if (clientList != null)
+                {
+                    return clientList;
+                }
+                else
+                {
+                    throw new ArgumentNullException();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         public void UpdateClient(ClientModel clientModel)
         {
             try

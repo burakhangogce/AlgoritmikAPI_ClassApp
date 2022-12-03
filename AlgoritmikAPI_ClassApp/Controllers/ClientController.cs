@@ -33,7 +33,21 @@ namespace AlgoritmikAPI_ClassApp.Controllers
             return diet;
         }
 
-     
+
+        [HttpGet("myclients/{id}")]
+        public async Task<ActionResult<IEnumerable<ClientModel>>> GetMyClients(int id)
+        {
+            List<ClientModel> myClients = await Task.FromResult(_IClient.GetMyClients(id));
+
+            if (myClients == null)
+            {
+                return NotFound();
+            }
+            return myClients;
+        }
+
+
+
 
         [HttpPut("update/{id}")]
         public async Task<ActionResult<ClientModel>> Put(int id, ClientModel clientModel)

@@ -24,6 +24,7 @@ builder.Services.AddTransient<IDiet,DietRepository>();
 builder.Services.AddTransient<INutritionist,NutritionistRepository>();
 builder.Services.AddTransient<IClient,ClientRepository>();
 builder.Services.AddTransient<IRecipe,RecipeRepository>();
+builder.Services.AddTransient<INotification,NotificationRepository>();
 builder.Services.AddControllers();
 builder.Services.Configure<IdentityOptions>(opts =>
 {
