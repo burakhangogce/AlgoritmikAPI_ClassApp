@@ -34,6 +34,12 @@ builder.Services.Configure<IdentityOptions>(opts =>
     opts.Password.RequireUppercase = false;
     opts.User.RequireUniqueEmail = true;
 });
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromSeconds(10);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 builder.Services.AddMvc()
              .AddJsonOptions(opt =>
              {
@@ -66,6 +72,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseHttpsRedirection();
+app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

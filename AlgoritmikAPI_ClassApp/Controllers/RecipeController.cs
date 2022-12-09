@@ -1,10 +1,8 @@
 ﻿using AlgoritmikAPI_ClassApp.Interface;
 using AlgoritmikAPI_ClassApp.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace AlgoritmikAPI_ClassApp.Controllers
 {
@@ -20,59 +18,117 @@ namespace AlgoritmikAPI_ClassApp.Controllers
             _IRecipe = IRecipe;
         }
 
-      
+
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<IEnumerable<RecipeModel>>> Get(int id)
+        public async Task<ActionResult<ResponseModel<IEnumerable<RecipeModel>>>> Get(int id)
         {
-            List<RecipeModel> recipeList = await Task.FromResult(_IRecipe.GetRecipes(id));
-
-            if (recipeList == null)
+            var response = new ResponseModel<IEnumerable<RecipeModel>>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            try
             {
-                return NotFound();
+                List<RecipeModel> recipeList = await Task.FromResult(_IRecipe.GetRecipes(id));
+                if (recipeList == null)
+                {
+                    response.isSuccess = false;
+                    response.errorModel = new ErrorResponseModel(errorMessage: "Tarif bulunamadı.");
+                    return response;
+                }
+                response.body = recipeList;
+                return response;
             }
-            return Ok(recipeList);
+            catch (Exception ex)
+            {
+                response.statusCode = 400;
+                response.isSuccess = false;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
+            }
+
         }
 
-        [HttpPost]
-        public async Task<ActionResult<RecipeModel>> Post(RecipeModel recipeModel)
+        [HttpPost("addrecipe")]
+        public async Task<ActionResult<ResponseModel<RecipeModel>>> Post(RecipeModel recipeModel)
         {
-            _IRecipe.AddRecipe(recipeModel);
-            return await Task.FromResult(recipeModel);
+            var response = new ResponseModel<RecipeModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            try
+            {
+                _IRecipe.AddRecipe(recipeModel);
+            }
+            catch (Exception ex)
+            {
+                response.statusCode = 400;
+                response.isSuccess = false;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
+            }
+            response.body = await Task.FromResult(recipeModel);
+            return response;
         }
 
 
 
         [HttpPut("update/{id}")]
-        public async Task<ActionResult<RecipeModel>> Put(int id, RecipeModel recipeModel)
+        public async Task<ActionResult<ResponseModel<RecipeModel>>> Put(int id, RecipeModel recipeModel)
         {
-            if (id != recipeModel.recipeId)
-            {
-                return BadRequest();
-            }
+            var response = new ResponseModel<RecipeModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
             try
             {
-                _IRecipe.UpdateRecipe(recipeModel);
+                if (id != recipeModel.recipeId)
+                {
+                    response.isSuccess = false;
+                    response.errorModel = new ErrorResponseModel(errorMessage: "Tarif bulunamadı!");
+                    return response;
+                }
+                try
+                {
+                    _IRecipe.UpdateRecipe(recipeModel);
+                    response.body = await Task.FromResult(recipeModel);
+                    return response;
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    response.statusCode = 400;
+                    if (!RecipeExists(id))
+                    {
+                        response.isSuccess = false;
+                        response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                        return response;
+                    }
+                    else
+                    {
+                        response.errorModel = new ErrorResponseModel(errorMessage: "Tarif bulunamadı!");
+                        return response;
+                    }
+                }
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!RecipeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                response.isSuccess = false;
+                response.statusCode = 400;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
             }
-            return await Task.FromResult(recipeModel);
+
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<RecipeModel>> Delete(int id)
+        public async Task<ActionResult<ResponseModel<RecipeModel>>> Delete(int id)
         {
-            var recipe = _IRecipe.DeleteRecipe(id);
-            return await Task.FromResult(recipe);
+            var response = new ResponseModel<RecipeModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            try
+            {
+                var recipe = _IRecipe.DeleteRecipe(id);
+                response.body = await Task.FromResult(recipe);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.isSuccess = false;
+                response.statusCode = 400;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
+            }
+
         }
 
         private bool RecipeExists(int id)

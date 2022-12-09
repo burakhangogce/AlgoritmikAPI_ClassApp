@@ -7,6 +7,7 @@ namespace AlgoritmikAPI_ClassApp.Interface
         public ClientModel GetClient(int id);
         public void UpdateClient(ClientModel clientModel);
         public bool CheckClient(int id);
+        public void AddClient(ClientModel clientModel);
         public List<ClientModel> GetMyClients(int id);
 
     }

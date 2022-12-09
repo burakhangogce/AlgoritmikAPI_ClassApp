@@ -56,6 +56,19 @@ namespace AlgoritmikAPI_ClassApp.Repository
             }
         }
 
+        public void AddClient(ClientModel clientModel)
+        {
+            try
+            {
+                _dbContext.Client!.AddRange(clientModel);
+                _dbContext.SaveChanges();
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
         public void UpdateClient(ClientModel clientModel)
         {
             try

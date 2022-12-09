@@ -1,7 +1,6 @@
 ﻿using AlgoritmikAPI_ClassApp.Interface;
 using AlgoritmikAPI_ClassApp.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,59 +18,95 @@ namespace AlgoritmikAPI_ClassApp.Controllers
             _IClient = IClient;
         }
 
-      
+
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ClientModel>> Get(int id)
+        public async Task<ActionResult<ResponseModel<ClientModel>>> Get(int id)
         {
-            ClientModel diet = await Task.FromResult(_IClient.GetClient(id));
-
-            if (diet == null)
+            var response = new ResponseModel<ClientModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            try
             {
-                return NotFound();
+                ClientModel client = await Task.FromResult(_IClient.GetClient(id));
+                response.body = client;
+                return response;
             }
-            return diet;
+            catch (Exception ex)
+            {
+                response.statusCode = 400;
+                response.isSuccess = false;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
+            }
+
         }
 
 
         [HttpGet("myclients/{id}")]
-        public async Task<ActionResult<IEnumerable<ClientModel>>> GetMyClients(int id)
+        public async Task<ActionResult<ResponseModel<IEnumerable<ClientModel>>>> GetMyClients(int id)
         {
-            List<ClientModel> myClients = await Task.FromResult(_IClient.GetMyClients(id));
-
-            if (myClients == null)
+            var response = new ResponseModel<IEnumerable<ClientModel>>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            try
             {
-                return NotFound();
+                List<ClientModel> myClients = await Task.FromResult(_IClient.GetMyClients(id));
+                response.body = myClients;
+                return response;
             }
-            return myClients;
+            catch (Exception ex)
+            {
+                response.isSuccess = false;
+                response.statusCode = 400;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
+            }
+
         }
 
 
 
 
         [HttpPut("update/{id}")]
-        public async Task<ActionResult<ClientModel>> Put(int id, ClientModel clientModel)
+        public async Task<ActionResult<ResponseModel<ClientModel>>> Put(int id, ClientModel clientModel)
         {
-            if (id != clientModel.clientId)
-            {
-                return BadRequest();
-            }
+            var response = new ResponseModel<ClientModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
             try
             {
-                _IClient.UpdateClient(clientModel);
+                if (id != clientModel.clientId)
+                {
+                    response.isSuccess = false;
+                    response.errorModel = new ErrorResponseModel(errorMessage: "Client bulunamadı!");
+                    return response;
+                }
+                try
+                {
+                    _IClient.UpdateClient(clientModel);
+                    response.body = await Task.FromResult(clientModel);
+                    return response;
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    response.statusCode = 400;
+                    if (!ClientExists(id))
+                    {
+                        response.isSuccess = false;
+                        response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                        return response;
+                    }
+                    else
+                    {
+                        response.errorModel = new ErrorResponseModel(errorMessage: "Client bulunamadı!");
+                        return response;
+                    }
+                }
+
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!ClientExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                response.isSuccess = false;
+                response.statusCode = 400;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
             }
-            return await Task.FromResult(clientModel);
+
         }
 
         private bool ClientExists(int id)

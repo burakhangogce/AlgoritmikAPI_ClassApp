@@ -1,15 +1,11 @@
 ﻿using AlgoritmikAPI_ClassApp.DTO;
-using AlgoritmikAPI_ClassApp.Interface;
 using AlgoritmikAPI_ClassApp.Models;
-using Microsoft.AspNetCore.Http;
+using Firebase.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace AlgoritmikAPI_ClassApp.Controllers
@@ -21,9 +17,12 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
         public IConfiguration _configuration;
         readonly DatabaseContext _dbContext = new();
+        FirebaseAuthProvider auth;
 
         public AccountController(IConfiguration config, DatabaseContext context)
         {
+            auth = new FirebaseAuthProvider(
+                           new FirebaseConfig("AIzaSyDEQbDRh7R1Q8QQdOPPAloeF2IH814CJ_M"));
             _configuration = config;
             _dbContext = context;
 
@@ -77,30 +76,81 @@ namespace AlgoritmikAPI_ClassApp.Controllers
             {
                 UserName = registerDto.UserName!,
                 Token = CreateToken(user),
-                
+
             };
 
             return userDto;
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<UserDto>> Login(LoginDTO loginDto)
+        public async Task<ActionResult<ResponseModel<UserDto>>> Login(LoginDTO loginDto)
         {
-            
-            var user = await _dbContext.UserInfo!
-                .SingleOrDefaultAsync(x => x.UserName == loginDto.Username);
-
-            if (user == null) return Unauthorized("Invalid UserName");
-                if (loginDto.Password != user.Password) return Unauthorized("Invalid Password");
-
-            var userDto = new UserDto
+            var response = new ResponseModel<UserDto>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            try
             {
-                UserName = loginDto.Username!,
-                Token = CreateToken(user),
+                var user = await _dbContext.UserInfo!.SingleOrDefaultAsync(x => x.UserName == loginDto.Username);
+                if (user == null)
+                {
+                    response.isSuccess = false;
+                    response.errorModel = new ErrorResponseModel(errorMessage: "Invalid UserName");
+                    return response;
+                }
+                if (loginDto.Password != user.Password)
+                {
+                    response.isSuccess = false;
+                    response.errorModel = new ErrorResponseModel(errorMessage: "Invalid Password");
+                    return response;
+                }
+                var userDto = new UserDto
+                {
+                    UserName = loginDto.Username!,
+                    Token = CreateToken(user),
+                };
+                response.body = userDto;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.statusCode = 400;
+                response.isSuccess = false;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
+            }
 
-            };
+        }
+        [HttpPost("loginfirebase")]
+        public async Task<ActionResult<ResponseModel<FirebaseAuthLink>>> LoginFirebase(LoginModel login)
+        {
+            var response = new ResponseModel<FirebaseAuthLink>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            try
+            {
+                FirebaseAuthLink resp = await auth.CreateUserWithEmailAndPasswordAsync(login.Email, login.Password);
+                var fbAuthLink = await auth.SignInWithEmailAndPasswordAsync(login.Email, login.Password);
+                string token = fbAuthLink.FirebaseToken;
+                response.body = fbAuthLink;
+                var user = new UserInfo
+                {
+                    UserName = "username",
+                    Email = login.Email,
+                    DisplayName = "dd",
+                    Password = login.Password,
+                    CreatedDate = DateTime.Now,
 
-            return userDto;
+                };
+                if (token != null)
+                {
+                    _dbContext.UserInfo!.Add(user);
+                    await _dbContext.SaveChangesAsync();
+                }
+                return response;
+            }
+            catch (FirebaseAuthException ex)
+            {
+                response.statusCode = 400;
+                response.isSuccess = false;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
+            }
         }
 
 

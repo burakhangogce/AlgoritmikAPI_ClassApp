@@ -1,7 +1,6 @@
 ﻿using AlgoritmikAPI_ClassApp.Interface;
 using AlgoritmikAPI_ClassApp.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,57 +18,116 @@ namespace AlgoritmikAPI_ClassApp.Controllers
             _IDiet = IDiet;
         }
 
-      
+
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<DietModel>> Get(int id)
+        public async Task<ActionResult<ResponseModel<DietModel>>> Get(int id)
         {
-            DietModel diet = await Task.FromResult(_IDiet.GetDiet(id));
-
-            if (diet == null)
+            var response = new ResponseModel<DietModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            try
             {
-                return NotFound();
+                DietModel diet = await Task.FromResult(_IDiet.GetDiet(id));
+                if (diet == null)
+                {
+                    response.isSuccess = false;
+                    response.errorModel = new ErrorResponseModel(errorMessage: "Diyet bulunamadı.");
+                    return response;
+                }
+                response.body = diet;
+                return response;
             }
-            return diet;
+            catch (Exception ex)
+            {
+                response.statusCode = 400;
+                response.isSuccess = false;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
+            }
+
         }
 
         [HttpPost]
-        public async Task<ActionResult<DietModel>> Post(DietModel diet)
+        public async Task<ActionResult<ResponseModel<DietModel>>> Post(DietModel diet)
         {
-            _IDiet.AddDiet(diet);
-            return await Task.FromResult(diet);
+            var response = new ResponseModel<DietModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            try
+            {
+                _IDiet.AddDiet(diet);
+            }
+            catch (Exception ex)
+            {
+                response.statusCode = 400;
+                response.isSuccess = false;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
+            }
+            response.body = await Task.FromResult(diet);
+
+            return response;
         }
 
         [HttpPut("update/{id}")]
-        public async Task<ActionResult<DietModel>> Put(int id, DietModel dietModel)
+        public async Task<ActionResult<ResponseModel<DietModel>>> Put(int id, DietModel dietModel)
         {
-            if (id != dietModel.dietId)
-            {
-                return BadRequest();
-            }
+            var response = new ResponseModel<DietModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
             try
             {
-                _IDiet.UpdateDiet(dietModel);
+                if (id != dietModel.dietId)
+                {
+                    response.isSuccess = false;
+                    response.errorModel = new ErrorResponseModel(errorMessage: "Client bulunamadı!");
+                    return response;
+                }
+                try
+                {
+                    _IDiet.UpdateDiet(dietModel);
+                    response.body = await Task.FromResult(dietModel);
+                    return response;
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    response.statusCode = 400;
+                    if (!DietExists(id))
+                    {
+                        response.isSuccess = false;
+                        response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                        return response;
+                    }
+                    else
+                    {
+                        response.errorModel = new ErrorResponseModel(errorMessage: "Diyet bulunamadı!");
+                        return response;
+                    }
+                }
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!DietExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                response.isSuccess = false;
+                response.statusCode = 400;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
             }
-            return await Task.FromResult(dietModel);
+
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<DietModel>> Delete(int id)
+        public async Task<ActionResult<ResponseModel<DietModel>>> Delete(int id)
         {
-            var diet = _IDiet.DeleteDiet(id);
-            return await Task.FromResult(diet);
+            var response = new ResponseModel<DietModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            try
+            {
+                var diet = _IDiet.DeleteDiet(id);
+                response.body = await Task.FromResult(diet);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.isSuccess = false;
+                response.statusCode = 400;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
+            }
+
         }
 
         private bool DietExists(int id)
