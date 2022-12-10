@@ -46,7 +46,7 @@ namespace AlgoritmikAPI_ClassApp.Controllers
                 _configuration["Jwt:Issuer"],
                 _configuration["Jwt:Audience"],
                 claims,
-                expires: DateTime.UtcNow.AddMinutes(10),
+                expires: DateTime.UtcNow.AddMinutes(1000),
                 signingCredentials: signIn);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
