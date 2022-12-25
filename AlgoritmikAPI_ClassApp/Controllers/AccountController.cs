@@ -118,8 +118,8 @@ namespace AlgoritmikAPI_ClassApp.Controllers
             }
 
         }
-        [HttpPost("loginfirebase")]
-        public async Task<ActionResult<ResponseModel<FirebaseAuthLink>>> LoginFirebase(LoginModel login)
+        [HttpPost("registerfirebase")]
+        public async Task<ActionResult<ResponseModel<FirebaseAuthLink>>> RegisterFirebase(LoginModel login)
         {
             var response = new ResponseModel<FirebaseAuthLink>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
             try
@@ -142,6 +142,65 @@ namespace AlgoritmikAPI_ClassApp.Controllers
                     _dbContext.UserInfo!.Add(user);
                     await _dbContext.SaveChangesAsync();
                 }
+                return response;
+            }
+            catch (FirebaseAuthException ex)
+            {
+                response.statusCode = 400;
+                response.isSuccess = false;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
+            }
+        }
+
+        [HttpPost("loginfirebase")]
+        public async Task<ActionResult<ResponseModel<FirebaseAuthLink>>> LoginFirebase(LoginModel login)
+        {
+            var response = new ResponseModel<FirebaseAuthLink>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            try
+            {
+                var fbAuthLink = await auth.SignInWithEmailAndPasswordAsync(login.Email, login.Password);
+                string token = fbAuthLink.FirebaseToken;
+                response.body = fbAuthLink;
+                var user = new UserInfo
+                {
+                    UserName = "username",
+                    Email = login.Email,
+                    DisplayName = "dd",
+                    Password = login.Password,
+                    CreatedDate = DateTime.Now,
+
+                };
+                return response;
+            }
+            catch (FirebaseAuthException ex)
+            {
+                response.statusCode = 400;
+                response.isSuccess = false;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
+            }
+        }
+
+        [HttpPost("refreshfirebase")]
+        public async Task<ActionResult<ResponseModel<FirebaseAuthLink>>> RefreshToken(LoginModel login)
+        {
+            var response = new ResponseModel<FirebaseAuthLink>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            try
+            {
+                FirebaseAuthLink resp = await auth.SignInWithEmailAndPasswordAsync(login.Email, login.Password);
+                var fbAuthLink = await auth.RefreshAuthAsync(resp);
+                string token = fbAuthLink.FirebaseToken;
+                response.body = fbAuthLink;
+                var user = new UserInfo
+                {
+                    UserName = "username",
+                    Email = login.Email,
+                    DisplayName = "dd",
+                    Password = login.Password,
+                    CreatedDate = DateTime.Now,
+
+                };
                 return response;
             }
             catch (FirebaseAuthException ex)

@@ -1,6 +1,8 @@
 using AlgoritmikAPI_ClassApp.Interface;
 using AlgoritmikAPI_ClassApp.Models;
 using AlgoritmikAPI_ClassApp.Repository;
+using DinkToPdf;
+using DinkToPdf.Contracts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +25,7 @@ builder.Services.AddTransient<INutritionist, NutritionistRepository>();
 builder.Services.AddTransient<IClient, ClientRepository>();
 builder.Services.AddTransient<IRecipe, RecipeRepository>();
 builder.Services.AddTransient<INotification, NotificationRepository>();
+builder.Services.AddTransient<IPdf, PdfRepository>();
 builder.Services.AddControllers();
 builder.Services.Configure<IdentityOptions>(opts =>
 {
@@ -38,6 +41,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+builder.Services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 builder.Services.AddMvc()
              .AddJsonOptions(opt =>
              {
@@ -50,7 +54,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     options.Authority = "https://securetoken.google.com/fitimapp";
     options.TokenValidationParameters = new TokenValidationParameters()
     {
-
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidAudience = "fitimapp",

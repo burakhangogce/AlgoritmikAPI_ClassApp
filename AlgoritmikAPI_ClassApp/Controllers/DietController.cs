@@ -46,7 +46,7 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
         }
 
-        [HttpPost]
+        [HttpPost("adddiet")]
         public async Task<ActionResult<ResponseModel<DietModel>>> Post(DietModel diet)
         {
             var response = new ResponseModel<DietModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
