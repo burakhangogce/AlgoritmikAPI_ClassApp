@@ -45,6 +45,56 @@ namespace AlgoritmikAPI_ClassApp.Controllers
             }
 
         }
+        [HttpGet("getclientdiets/{id}")]
+        public async Task<ActionResult<ResponseModel<IEnumerable<DietModel>>>> GetClientDiets(int id)
+        {
+            var response = new ResponseModel<IEnumerable<DietModel>>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            try
+            {
+                List<DietModel> diets = await Task.FromResult(_IDiet.GetClientDiets(id));
+                if (diets == null || diets.Count <= 0)
+                {
+                    response.isSuccess = false;
+                    response.errorModel = new ErrorResponseModel(errorMessage: "Diyet bulunamadı.");
+                    return response;
+                }
+                response.body = diets;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.statusCode = 400;
+                response.isSuccess = false;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
+            }
+
+        }
+        [HttpGet("getnutritiondiets/{id}")]
+        public async Task<ActionResult<ResponseModel<IEnumerable<DietModel>>>> GetNutritionDiets(int id)
+        {
+            var response = new ResponseModel<IEnumerable<DietModel>>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            try
+            {
+                List<DietModel> diets = await Task.FromResult(_IDiet.GetNutritionDiets(id));
+                if (diets == null || diets.Count <= 0)
+                {
+                    response.isSuccess = false;
+                    response.errorModel = new ErrorResponseModel(errorMessage: "Diyet bulunamadı.");
+                    return response;
+                }
+                response.body = diets;
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.statusCode = 400;
+                response.isSuccess = false;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
+            }
+
+        }
 
         [HttpPost("adddiet")]
         public async Task<ActionResult<ResponseModel<DietModel>>> Post(DietModel diet)
@@ -110,7 +160,7 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<ActionResult<ResponseModel<DietModel>>> Delete(int id)
         {
             var response = new ResponseModel<DietModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);

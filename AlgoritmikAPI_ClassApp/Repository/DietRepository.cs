@@ -1,6 +1,5 @@
 ﻿using AlgoritmikAPI_ClassApp.Interface;
 using AlgoritmikAPI_ClassApp.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace AlgoritmikAPI_ClassApp.Repository
 {
@@ -9,10 +8,10 @@ namespace AlgoritmikAPI_ClassApp.Repository
         readonly DatabaseContext _dbContext = new();
 
         public DietRepository(DatabaseContext dbContext)
-        { 
+        {
             _dbContext = dbContext;
         }
-       
+
 
         public DietModel GetDiet(int id)
         {
@@ -37,6 +36,60 @@ namespace AlgoritmikAPI_ClassApp.Repository
                 {
                     throw new ArgumentNullException();
                 }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public List<DietModel> GetClientDiets(int id)
+        {
+            try
+            {
+                List<DietModel> dietList = _dbContext.Diets!.Where(x => x.clientId.Equals(id)).ToList();
+                for (int y = 0; y < dietList.Count; y++)
+                {
+                    DietModel dietModel = dietList[y];
+                    List<DietDayModel> dietDayList = _dbContext.DietDays!.Where(x => x.dietId.Equals(dietList[y].dietId)).ToList();
+                    if (dietDayList != null)
+                    {
+                        for (int i = 0; i < dietDayList.Count; i++)
+                        {
+                            List<DietMenuModel> dietDayMenuList = _dbContext.DietDayMenus!.Where(x => x.dietDayId.Equals(dietDayList[i].dietDayId)).ToList();
+                            dietDayList[i].dietMenus = dietDayMenuList;
+                        }
+                    }
+                    dietModel.dietDayModel = dietDayList!;
+                }
+                return dietList;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public List<DietModel> GetNutritionDiets(int id)
+        {
+            try
+            {
+                List<DietModel> dietList = _dbContext.Diets!.Where(x => x.nutritionistId.Equals(id)).ToList();
+                for (int y = 0; y < dietList.Count; y++)
+                {
+                    DietModel dietModel = dietList[y];
+                    List<DietDayModel> dietDayList = _dbContext.DietDays!.Where(x => x.dietId.Equals(dietList[y].dietId)).ToList();
+                    if (dietDayList != null)
+                    {
+                        for (int i = 0; i < dietDayList.Count; i++)
+                        {
+                            List<DietMenuModel> dietDayMenuList = _dbContext.DietDayMenus!.Where(x => x.dietDayId.Equals(dietDayList[i].dietDayId)).ToList();
+                            dietDayList[i].dietMenus = dietDayMenuList;
+                        }
+                    }
+                    dietModel.dietDayModel = dietDayList!;
+                }
+                return dietList;
             }
             catch
             {
@@ -99,6 +152,6 @@ namespace AlgoritmikAPI_ClassApp.Repository
             return _dbContext.Diets.Any(e => e.dietId == id);
         }
 
-       
+
     }
 }

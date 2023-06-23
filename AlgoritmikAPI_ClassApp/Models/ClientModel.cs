@@ -13,7 +13,7 @@ namespace AlgoritmikAPI_ClassApp.Models
         public int clientAge { get; set; }
         public int firstWeight { get; set; }
         public int lastWeight { get; set; }
-        public string token { get; set; }
+        public string? token { get; set; }
         [ForeignKey("nutritionistId")]
         public virtual NutritionistModel? nutritionistModel { get; set; }
     }

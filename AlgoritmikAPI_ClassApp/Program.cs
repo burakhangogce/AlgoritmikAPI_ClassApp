@@ -15,11 +15,6 @@ var builder = WebApplication.CreateBuilder(args);
 //Donot forgot to add ConnectionStrings as "dbConnection" to the appsetting.json file
 builder.Services.AddDbContext<DatabaseContext>
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("dbConnection")));
-builder.Services.AddTransient<IStudent, StudentRepository>();
-builder.Services.AddTransient<IReport, ReportRepository>();
-builder.Services.AddTransient<IMyClass, MyClassRepository>();
-builder.Services.AddTransient<IHomeWork, HomeWorkRepository>();
-builder.Services.AddTransient<IPerformance, PerformanceRepository>();
 builder.Services.AddTransient<IDiet, DietRepository>();
 builder.Services.AddTransient<INutritionist, NutritionistRepository>();
 builder.Services.AddTransient<IClient, ClientRepository>();

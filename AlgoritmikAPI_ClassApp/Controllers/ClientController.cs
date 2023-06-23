@@ -61,6 +61,26 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
         }
 
+        [HttpPost("addclient")]
+        public async Task<ActionResult<ResponseModel<ClientModel>>> Post(ClientModel client)
+        {
+            var response = new ResponseModel<ClientModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            try
+            {
+                _IClient.AddClient(client);
+            }
+            catch (Exception ex)
+            {
+                response.statusCode = 400;
+                response.isSuccess = false;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
+            }
+            response.body = await Task.FromResult(client);
+
+            return response;
+        }
+
 
 
 

@@ -14,11 +14,6 @@ namespace AlgoritmikAPI_ClassApp.Models
         }
 
         public virtual DbSet<UserInfo>? UserInfo { get; set; }
-        public virtual DbSet<Student>? Student { get; set; }
-        public virtual DbSet<MyClass>? MyClass { get; set; }
-        public virtual DbSet<Report>? Report { get; set; }
-        public virtual DbSet<Performance>? Performance { get; set; }
-        public virtual DbSet<HomeWork>? HomeWork { get; set; }
         public virtual DbSet<DietModel>? Diets { get; set; }
         public virtual DbSet<DietDayModel>? DietDays { get; set; }
         public virtual DbSet<DietMenuModel>? DietDayMenus { get; set; }
@@ -29,11 +24,17 @@ namespace AlgoritmikAPI_ClassApp.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            modelBuilder
+            .Entity<DietModel>()
+            .HasMany(e => e.dietDayModel)
+            .WithOne(e => e.dietModel)
+            .OnDelete(DeleteBehavior.ClientCascade);
 
-
-
-
+            modelBuilder
+            .Entity<DietDayModel>()
+            .HasMany(e => e.dietMenus)
+            .WithOne(e => e.dietDayModel)
+            .OnDelete(DeleteBehavior.ClientCascade);
 
             OnModelCreatingPartial(modelBuilder);
         }

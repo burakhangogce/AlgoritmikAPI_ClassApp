@@ -27,7 +27,7 @@ namespace AlgoritmikAPI_ClassApp.Controllers
             try
             {
                 List<RecipeModel> recipeList = await Task.FromResult(_IRecipe.GetRecipes(id));
-                if (recipeList == null)
+                if (recipeList == null || recipeList.Count <= 0)
                 {
                     response.isSuccess = false;
                     response.errorModel = new ErrorResponseModel(errorMessage: "Tarif bulunamadı.");

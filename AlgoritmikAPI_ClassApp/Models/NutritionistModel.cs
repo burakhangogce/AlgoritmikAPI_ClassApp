@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AlgoritmikAPI_ClassApp.Models
 {
@@ -11,5 +10,6 @@ namespace AlgoritmikAPI_ClassApp.Models
         public string nutritionistName { get; set; }
         public string nutritionistTitle { get; set; }
         public int nutritionistAge { get; set; }
+        public int fitimCoin { get; set; }
     }
 }

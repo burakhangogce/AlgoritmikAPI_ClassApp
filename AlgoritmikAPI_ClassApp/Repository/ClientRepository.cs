@@ -1,6 +1,5 @@
 ﻿using AlgoritmikAPI_ClassApp.Interface;
 using AlgoritmikAPI_ClassApp.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace AlgoritmikAPI_ClassApp.Repository
 {
@@ -9,10 +8,10 @@ namespace AlgoritmikAPI_ClassApp.Repository
         readonly DatabaseContext _dbContext = new();
 
         public ClientRepository(DatabaseContext dbContext)
-        { 
+        {
             _dbContext = dbContext;
         }
-       
+
 
         public ClientModel GetClient(int id)
         {
@@ -21,7 +20,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
                 ClientModel? clientModel = _dbContext.Client!.Find(id);
                 if (clientModel != null)
                 {
-                    
+
                     return clientModel;
                 }
                 else
@@ -34,6 +33,8 @@ namespace AlgoritmikAPI_ClassApp.Repository
                 throw;
             }
         }
+
+
 
         public List<ClientModel> GetMyClients(int id)
         {
@@ -87,6 +88,6 @@ namespace AlgoritmikAPI_ClassApp.Repository
             return _dbContext.Client.Any(e => e.clientId == id);
         }
 
-       
+
     }
 }
