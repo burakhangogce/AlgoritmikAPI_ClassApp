@@ -19,9 +19,10 @@ namespace AlgoritmikAPI_ClassApp.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseModel<NutritionistModel>>> Get(int id)
+        public async Task<ActionResult<NutritionistResponseModel>> Get(int id)
         {
-            var response = new ResponseModel<NutritionistModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new NutritionistResponseModel(responseModel: responseModel);
             try
             {
                 NutritionistModel nutritionist = await Task.FromResult(_INutritionist.GetNutritionist(id));
@@ -31,7 +32,10 @@ namespace AlgoritmikAPI_ClassApp.Controllers
                     response.errorModel = new ErrorResponseModel(errorMessage: "Diyetisyen bulunamadı.");
                     return response;
                 }
-                response.body = nutritionist;
+                else
+                {
+                    response.models.Add(nutritionist);
+                }
                 return response;
             }
             catch (Exception ex)
@@ -47,9 +51,10 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
 
         [HttpPut("update/{id}")]
-        public async Task<ActionResult<ResponseModel<NutritionistModel>>> Put(int id, NutritionistModel nutritionist)
+        public async Task<ActionResult<NutritionistResponseModel>> Put(int id, NutritionistModel nutritionist)
         {
-            var response = new ResponseModel<NutritionistModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new NutritionistResponseModel(responseModel: responseModel);
             try
             {
                 if (id != nutritionist.nutritionistId)
@@ -61,7 +66,7 @@ namespace AlgoritmikAPI_ClassApp.Controllers
                 try
                 {
                     _INutritionist.UpdateNutritionist(nutritionist);
-                    response.body = await Task.FromResult(nutritionist);
+                    response.models.Add(nutritionist);
                     return response;
                 }
                 catch (DbUpdateConcurrencyException ex)

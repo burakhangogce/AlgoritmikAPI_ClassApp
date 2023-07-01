@@ -21,13 +21,14 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseModel<ClientModel>>> Get(int id)
+        public async Task<ActionResult<ClientResponseModel>> Get(int id)
         {
-            var response = new ResponseModel<ClientModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new ClientResponseModel(responseModel: responseModel);
             try
             {
                 ClientModel client = await Task.FromResult(_IClient.GetClient(id));
-                response.body = client;
+                response.models.Add(client);
                 return response;
             }
             catch (Exception ex)
@@ -42,13 +43,14 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
 
         [HttpGet("myclients/{id}")]
-        public async Task<ActionResult<ResponseModel<IEnumerable<ClientModel>>>> GetMyClients(int id)
+        public async Task<ActionResult<ClientResponseModel>> GetMyClients(int id)
         {
-            var response = new ResponseModel<IEnumerable<ClientModel>>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new ClientResponseModel(responseModel: responseModel);
             try
             {
                 List<ClientModel> myClients = await Task.FromResult(_IClient.GetMyClients(id));
-                response.body = myClients;
+                response.models.AddRange(myClients);
                 return response;
             }
             catch (Exception ex)
@@ -62,12 +64,14 @@ namespace AlgoritmikAPI_ClassApp.Controllers
         }
 
         [HttpPost("addclient")]
-        public async Task<ActionResult<ResponseModel<ClientModel>>> Post(ClientModel client)
+        public async Task<ActionResult<ClientResponseModel>> Post(ClientModel client)
         {
-            var response = new ResponseModel<ClientModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new ClientResponseModel(responseModel: responseModel);
             try
             {
                 _IClient.AddClient(client);
+                response.models.Add(client);
             }
             catch (Exception ex)
             {
@@ -76,8 +80,6 @@ namespace AlgoritmikAPI_ClassApp.Controllers
                 response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
                 return response;
             }
-            response.body = await Task.FromResult(client);
-
             return response;
         }
 
@@ -85,9 +87,10 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
 
         [HttpPut("update/{id}")]
-        public async Task<ActionResult<ResponseModel<ClientModel>>> Put(int id, ClientModel clientModel)
+        public async Task<ActionResult<ClientResponseModel>> Put(int id, ClientModel clientModel)
         {
-            var response = new ResponseModel<ClientModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new ClientResponseModel(responseModel: responseModel);
             try
             {
                 if (id != clientModel.clientId)
@@ -99,7 +102,7 @@ namespace AlgoritmikAPI_ClassApp.Controllers
                 try
                 {
                     _IClient.UpdateClient(clientModel);
-                    response.body = await Task.FromResult(clientModel);
+                    response.models.Add(clientModel);
                     return response;
                 }
                 catch (DbUpdateConcurrencyException ex)

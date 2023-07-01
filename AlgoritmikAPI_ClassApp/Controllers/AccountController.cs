@@ -1,5 +1,4 @@
-﻿using AlgoritmikAPI_ClassApp.DTO;
-using AlgoritmikAPI_ClassApp.Models;
+﻿using AlgoritmikAPI_ClassApp.Models;
 using Firebase.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -55,7 +54,7 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
 
         [HttpPost("register")]
-        public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
+        public async Task<ActionResult<UserModel>> Register(RegisterDto registerDto)
         {
             if (await UserExists(registerDto.UserName!)) return BadRequest("UserName Is Already Taken");
 
@@ -72,20 +71,20 @@ namespace AlgoritmikAPI_ClassApp.Controllers
             _dbContext.UserInfo!.Add(user);
             await _dbContext.SaveChangesAsync();
 
-            var userDto = new UserDto
+            var userDto = new UserModel
             {
                 UserName = registerDto.UserName!,
                 Token = CreateToken(user),
-
             };
 
             return userDto;
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<ResponseModel<UserDto>>> Login(LoginDTO loginDto)
+        public async Task<ActionResult<UserResponseModel>> Login(LoginDTO loginDto)
         {
-            var response = new ResponseModel<UserDto>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new UserResponseModel(responseModel: responseModel);
             try
             {
                 var user = await _dbContext.UserInfo!.SingleOrDefaultAsync(x => x.UserName == loginDto.Username);
@@ -101,12 +100,12 @@ namespace AlgoritmikAPI_ClassApp.Controllers
                     response.errorModel = new ErrorResponseModel(errorMessage: "Invalid Password");
                     return response;
                 }
-                var userDto = new UserDto
+                var userModel = new UserModel
                 {
                     UserName = loginDto.Username!,
                     Token = CreateToken(user),
                 };
-                response.body = userDto;
+                response.models.Add(userModel);
                 return response;
             }
             catch (Exception ex)
@@ -119,15 +118,16 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
         }
         [HttpPost("registerfirebase")]
-        public async Task<ActionResult<ResponseModel<FirebaseAuthLink>>> RegisterFirebase(LoginModel login)
+        public async Task<ActionResult<UserInfoResponseModel>> RegisterFirebase(LoginModel login)
         {
-            var response = new ResponseModel<FirebaseAuthLink>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new UserInfoResponseModel(responseModel: responseModel);
             try
             {
                 FirebaseAuthLink resp = await auth.CreateUserWithEmailAndPasswordAsync(login.Email, login.Password);
                 var fbAuthLink = await auth.SignInWithEmailAndPasswordAsync(login.Email, login.Password);
                 string token = fbAuthLink.FirebaseToken;
-                response.body = fbAuthLink;
+                response.models.Add(fbAuthLink);
                 var user = new UserInfo
                 {
                     UserName = "username",
@@ -154,14 +154,15 @@ namespace AlgoritmikAPI_ClassApp.Controllers
         }
 
         [HttpPost("loginfirebase")]
-        public async Task<ActionResult<ResponseModel<FirebaseAuthLink>>> LoginFirebase(LoginModel login)
+        public async Task<ActionResult<UserInfoResponseModel>> LoginFirebase(LoginModel login)
         {
-            var response = new ResponseModel<FirebaseAuthLink>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new UserInfoResponseModel(responseModel: responseModel);
             try
             {
                 var fbAuthLink = await auth.SignInWithEmailAndPasswordAsync(login.Email, login.Password);
                 string token = fbAuthLink.FirebaseToken;
-                response.body = fbAuthLink;
+                response.models.Add(fbAuthLink);
                 var user = new UserInfo
                 {
                     UserName = "username",
@@ -183,15 +184,16 @@ namespace AlgoritmikAPI_ClassApp.Controllers
         }
 
         [HttpPost("refreshfirebase")]
-        public async Task<ActionResult<ResponseModel<FirebaseAuthLink>>> RefreshToken(LoginModel login)
+        public async Task<ActionResult<UserInfoResponseModel>> RefreshToken(LoginModel login)
         {
-            var response = new ResponseModel<FirebaseAuthLink>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new UserInfoResponseModel(responseModel: responseModel);
             try
             {
                 FirebaseAuthLink resp = await auth.SignInWithEmailAndPasswordAsync(login.Email, login.Password);
                 var fbAuthLink = await auth.RefreshAuthAsync(resp);
                 string token = fbAuthLink.FirebaseToken;
-                response.body = fbAuthLink;
+                response.models.Add(fbAuthLink);
                 var user = new UserInfo
                 {
                     UserName = "username",

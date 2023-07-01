@@ -24,9 +24,10 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
 
         [HttpGet("getorders")]
-        public async Task<ActionResult<ResponseModel<List<NutritionistModel>>>> GetUnfilledOrders()
+        public async Task<ActionResult<NutritionistResponseModel>> GetUnfilledOrders()
         {
-            var response = new ResponseModel<List<NutritionistModel>>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new NutritionistResponseModel(responseModel: responseModel);
             try
             {
                 var responseString = ApiCall.GetApi("https://api.shopier.com/v1/orders?limit=10&page=1&sort=dateDesc");
@@ -56,7 +57,7 @@ namespace AlgoritmikAPI_ClassApp.Controllers
                         }
                     }
                 }
-                response.body = filledNutritionist;
+                response.models.AddRange(filledNutritionist);
             }
             catch (Exception ex)
             {

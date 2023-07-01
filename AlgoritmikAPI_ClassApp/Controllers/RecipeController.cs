@@ -21,9 +21,10 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseModel<IEnumerable<RecipeModel>>>> Get(int id)
+        public async Task<ActionResult<RecipeResponseModel>> Get(int id)
         {
-            var response = new ResponseModel<IEnumerable<RecipeModel>>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new RecipeResponseModel(responseModel: responseModel);
             try
             {
                 List<RecipeModel> recipeList = await Task.FromResult(_IRecipe.GetRecipes(id));
@@ -33,7 +34,10 @@ namespace AlgoritmikAPI_ClassApp.Controllers
                     response.errorModel = new ErrorResponseModel(errorMessage: "Tarif bulunamadı.");
                     return response;
                 }
-                response.body = recipeList;
+                else
+                {
+                    response.models.AddRange(recipeList);
+                }
                 return response;
             }
             catch (Exception ex)
@@ -47,9 +51,10 @@ namespace AlgoritmikAPI_ClassApp.Controllers
         }
 
         [HttpPost("addrecipe")]
-        public async Task<ActionResult<ResponseModel<RecipeModel>>> Post(RecipeModel recipeModel)
+        public async Task<ActionResult<RecipeResponseModel>> Post(RecipeModel recipeModel)
         {
-            var response = new ResponseModel<RecipeModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new RecipeResponseModel(responseModel: responseModel);
             try
             {
                 _IRecipe.AddRecipe(recipeModel);
@@ -61,16 +66,17 @@ namespace AlgoritmikAPI_ClassApp.Controllers
                 response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
                 return response;
             }
-            response.body = await Task.FromResult(recipeModel);
+            response.models.Add(recipeModel);
             return response;
         }
 
 
 
         [HttpPut("update/{id}")]
-        public async Task<ActionResult<ResponseModel<RecipeModel>>> Put(int id, RecipeModel recipeModel)
+        public async Task<ActionResult<RecipeResponseModel>> Put(int id, RecipeModel recipeModel)
         {
-            var response = new ResponseModel<RecipeModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new RecipeResponseModel(responseModel: responseModel);
             try
             {
                 if (id != recipeModel.recipeId)
@@ -82,7 +88,7 @@ namespace AlgoritmikAPI_ClassApp.Controllers
                 try
                 {
                     _IRecipe.UpdateRecipe(recipeModel);
-                    response.body = await Task.FromResult(recipeModel);
+                    response.models.Add(recipeModel);
                     return response;
                 }
                 catch (DbUpdateConcurrencyException ex)
@@ -112,13 +118,14 @@ namespace AlgoritmikAPI_ClassApp.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ResponseModel<RecipeModel>>> Delete(int id)
+        public async Task<ActionResult<RecipeResponseModel>> Delete(int id)
         {
-            var response = new ResponseModel<RecipeModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new RecipeResponseModel(responseModel: responseModel);
             try
             {
                 var recipe = _IRecipe.DeleteRecipe(id);
-                response.body = await Task.FromResult(recipe);
+                response.models.Add(recipe);
                 return response;
             }
             catch (Exception ex)

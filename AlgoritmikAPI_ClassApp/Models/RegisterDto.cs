@@ -1,4 +1,4 @@
-﻿namespace AlgoritmikAPI_ClassApp.DTO
+﻿namespace AlgoritmikAPI_ClassApp.Models
 {
     public class RegisterDto
     {

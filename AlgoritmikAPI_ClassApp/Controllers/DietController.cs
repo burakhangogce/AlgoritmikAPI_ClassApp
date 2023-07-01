@@ -21,9 +21,10 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ResponseModel<DietModel>>> Get(int id)
+        public async Task<ActionResult<DietResponseModel>> Get(int id)
         {
-            var response = new ResponseModel<DietModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new DietResponseModel(responseModel: responseModel);
             try
             {
                 DietModel diet = await Task.FromResult(_IDiet.GetDiet(id));
@@ -33,7 +34,11 @@ namespace AlgoritmikAPI_ClassApp.Controllers
                     response.errorModel = new ErrorResponseModel(errorMessage: "Diyet bulunamadı.");
                     return response;
                 }
-                response.body = diet;
+                else
+                {
+                    response.models.Add(diet);
+                }
+
                 return response;
             }
             catch (Exception ex)
@@ -46,9 +51,10 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
         }
         [HttpGet("getclientdiets/{id}")]
-        public async Task<ActionResult<ResponseModel<IEnumerable<DietModel>>>> GetClientDiets(int id)
+        public async Task<ActionResult<DietResponseModel>> GetClientDiets(int id)
         {
-            var response = new ResponseModel<IEnumerable<DietModel>>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new DietResponseModel(responseModel: responseModel);
             try
             {
                 List<DietModel> diets = await Task.FromResult(_IDiet.GetClientDiets(id));
@@ -58,7 +64,10 @@ namespace AlgoritmikAPI_ClassApp.Controllers
                     response.errorModel = new ErrorResponseModel(errorMessage: "Diyet bulunamadı.");
                     return response;
                 }
-                response.body = diets;
+                else
+                {
+                    response.models.AddRange(diets);
+                }
                 return response;
             }
             catch (Exception ex)
@@ -71,9 +80,10 @@ namespace AlgoritmikAPI_ClassApp.Controllers
 
         }
         [HttpGet("getnutritiondiets/{id}")]
-        public async Task<ActionResult<ResponseModel<IEnumerable<DietModel>>>> GetNutritionDiets(int id)
+        public async Task<ActionResult<DietResponseModel>> GetNutritionDiets(int id)
         {
-            var response = new ResponseModel<IEnumerable<DietModel>>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new DietResponseModel(responseModel: responseModel);
             try
             {
                 List<DietModel> diets = await Task.FromResult(_IDiet.GetNutritionDiets(id));
@@ -83,7 +93,10 @@ namespace AlgoritmikAPI_ClassApp.Controllers
                     response.errorModel = new ErrorResponseModel(errorMessage: "Diyet bulunamadı.");
                     return response;
                 }
-                response.body = diets;
+                else
+                {
+                    response.models.AddRange(diets);
+                }
                 return response;
             }
             catch (Exception ex)
@@ -97,12 +110,14 @@ namespace AlgoritmikAPI_ClassApp.Controllers
         }
 
         [HttpPost("adddiet")]
-        public async Task<ActionResult<ResponseModel<DietModel>>> Post(DietModel diet)
+        public async Task<ActionResult<DietResponseModel>> Post(DietModel diet)
         {
-            var response = new ResponseModel<DietModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new DietResponseModel(responseModel: responseModel);
             try
             {
                 _IDiet.AddDiet(diet);
+                response.models.Add(diet);
             }
             catch (Exception ex)
             {
@@ -111,15 +126,15 @@ namespace AlgoritmikAPI_ClassApp.Controllers
                 response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
                 return response;
             }
-            response.body = await Task.FromResult(diet);
 
             return response;
         }
 
         [HttpPut("update/{id}")]
-        public async Task<ActionResult<ResponseModel<DietModel>>> Put(int id, DietModel dietModel)
+        public async Task<ActionResult<DietResponseModel>> Put(int id, DietModel dietModel)
         {
-            var response = new ResponseModel<DietModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new DietResponseModel(responseModel: responseModel);
             try
             {
                 if (id != dietModel.dietId)
@@ -131,7 +146,7 @@ namespace AlgoritmikAPI_ClassApp.Controllers
                 try
                 {
                     _IDiet.UpdateDiet(dietModel);
-                    response.body = await Task.FromResult(dietModel);
+                    response.models.Add(dietModel);
                     return response;
                 }
                 catch (DbUpdateConcurrencyException ex)
@@ -161,13 +176,14 @@ namespace AlgoritmikAPI_ClassApp.Controllers
         }
 
         [HttpDelete("delete/{id}")]
-        public async Task<ActionResult<ResponseModel<DietModel>>> Delete(int id)
+        public async Task<ActionResult<DietResponseModel>> Delete(int id)
         {
-            var response = new ResponseModel<DietModel>(isSuccess: true, statusCode: 200, body: null, errorModel: null);
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new DietResponseModel(responseModel: responseModel);
             try
             {
                 var diet = _IDiet.DeleteDiet(id);
-                response.body = await Task.FromResult(diet);
+                response.models.Add(diet);
                 return response;
             }
             catch (Exception ex)
