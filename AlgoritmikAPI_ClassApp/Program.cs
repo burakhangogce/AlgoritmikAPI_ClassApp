@@ -21,6 +21,7 @@ builder.Services.AddTransient<IClient, ClientRepository>();
 builder.Services.AddTransient<IRecipe, RecipeRepository>();
 builder.Services.AddTransient<INotification, NotificationRepository>();
 builder.Services.AddTransient<IPdf, PdfRepository>();
+builder.Services.AddTransient<IVersion, VersionRepository>();
 builder.Services.AddControllers();
 builder.Services.Configure<IdentityOptions>(opts =>
 {

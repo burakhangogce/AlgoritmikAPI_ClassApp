@@ -20,6 +20,7 @@ namespace AlgoritmikAPI_ClassApp.Models
         public virtual DbSet<RecipeModel>? Recipe { get; set; }
         public virtual DbSet<NutritionistModel>? Nutritionist { get; set; }
         public virtual DbSet<ClientModel>? Client { get; set; }
+        public virtual DbSet<VersionModel>? Versions { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

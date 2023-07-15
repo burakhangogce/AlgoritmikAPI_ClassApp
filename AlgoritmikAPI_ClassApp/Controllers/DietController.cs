@@ -137,12 +137,6 @@ namespace AlgoritmikAPI_ClassApp.Controllers
             var response = new DietResponseModel(responseModel: responseModel);
             try
             {
-                if (id != dietModel.dietId)
-                {
-                    response.isSuccess = false;
-                    response.errorModel = new ErrorResponseModel(errorMessage: "Client bulunamadı!");
-                    return response;
-                }
                 try
                 {
                     _IDiet.UpdateDiet(dietModel);

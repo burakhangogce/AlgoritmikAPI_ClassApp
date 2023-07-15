@@ -102,7 +102,7 @@ namespace AlgoritmikAPI_ClassApp.Repository
         {
             try
             {
-                _dbContext.Diets!.AddRange(dietModel);
+                _dbContext.Diets!.Add(dietModel);
                 _dbContext.SaveChanges();
             }
             catch
@@ -111,11 +111,28 @@ namespace AlgoritmikAPI_ClassApp.Repository
             }
         }
 
-        public void UpdateDiet(DietModel dietModel)
+        public void UpdateDiet(DietModel currentDiet)
         {
             try
             {
-                _dbContext.Diets!.UpdateRange(dietModel);
+                List<DietMenuModel> deleteMenus = new List<DietMenuModel>();
+
+                DietModel dbDiet = _dbContext.Diets!.First(x => x.dietId == currentDiet.dietId);
+                foreach (var currentDietDay in dbDiet.dietDayModel)
+                {
+                    DietDayModel? dbDietDayModel = dbDiet.dietDayModel.FirstOrDefault(y => y.dietDayId == currentDietDay.dietDayId);
+                    if (dbDietDayModel != null)
+                    {
+                        foreach (var menus in dbDietDayModel.dietMenus)
+                        {
+                            if (currentDietDay.dietMenus.FirstOrDefault(z => z.dietMenuId == menus.dietMenuId) == null)
+                            {
+                                _dbContext.DietDayMenus.Remove(menus);
+                            };
+                        }
+                    }
+                }
+                _dbContext.Diets!.UpdateRange(currentDiet);
                 _dbContext.SaveChanges();
             }
             catch
