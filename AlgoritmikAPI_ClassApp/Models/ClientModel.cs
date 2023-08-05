@@ -7,6 +7,7 @@ namespace AlgoritmikAPI_ClassApp.Models
     {
         [Key]
         public int clientId { get; set; }
+        public int userId { get; set; }
         public int nutritionistId { get; set; }
         public DateTime clientStartDate { get; set; }
         public string clientName { get; set; }
@@ -16,5 +17,7 @@ namespace AlgoritmikAPI_ClassApp.Models
         public string? token { get; set; }
         [ForeignKey("nutritionistId")]
         public virtual NutritionistModel? nutritionistModel { get; set; }
+        [ForeignKey("userId")]
+        public virtual UserInfo? userModel { get; set; }
     }
 }

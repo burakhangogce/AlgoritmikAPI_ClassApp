@@ -21,6 +21,7 @@ namespace AlgoritmikAPI_ClassApp.Models
         public virtual DbSet<NutritionistModel>? Nutritionist { get; set; }
         public virtual DbSet<ClientModel>? Client { get; set; }
         public virtual DbSet<VersionModel>? Versions { get; set; }
+        public virtual DbSet<InviteModel>? Invites { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -36,6 +37,10 @@ namespace AlgoritmikAPI_ClassApp.Models
             .HasMany(e => e.dietMenus)
             .WithOne(e => e.dietDayModel)
             .OnDelete(DeleteBehavior.ClientCascade);
+            modelBuilder.Entity<DietMenuModel>()
+            .Ignore(a => a.isDelete);
+            modelBuilder.Entity<UserInfo>()
+            .Ignore(a => a.Token);
 
             OnModelCreatingPartial(modelBuilder);
         }

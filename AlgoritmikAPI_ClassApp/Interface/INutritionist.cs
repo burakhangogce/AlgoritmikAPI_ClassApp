@@ -5,6 +5,7 @@ namespace AlgoritmikAPI_ClassApp.Interface
     public interface INutritionist
     {
         public NutritionistModel GetNutritionist(int id);
+        public NutritionistModel GetNutritionistWithUserId(int id);
         public void UpdateNutritionist(NutritionistModel nutritionistModel);
         public bool CheckNutritionist(int id);
 

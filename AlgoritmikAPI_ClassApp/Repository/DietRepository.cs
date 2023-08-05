@@ -116,21 +116,20 @@ namespace AlgoritmikAPI_ClassApp.Repository
             try
             {
                 List<DietMenuModel> deleteMenus = new List<DietMenuModel>();
-
-                DietModel dbDiet = _dbContext.Diets!.First(x => x.dietId == currentDiet.dietId);
-                foreach (var currentDietDay in dbDiet.dietDayModel)
+                foreach (var currentDietDay in currentDiet.dietDayModel)
                 {
-                    DietDayModel? dbDietDayModel = dbDiet.dietDayModel.FirstOrDefault(y => y.dietDayId == currentDietDay.dietDayId);
-                    if (dbDietDayModel != null)
+                    foreach (var currentMenu in currentDietDay.dietMenus)
                     {
-                        foreach (var menus in dbDietDayModel.dietMenus)
+                        if (currentMenu.isDelete == 1)
                         {
-                            if (currentDietDay.dietMenus.FirstOrDefault(z => z.dietMenuId == menus.dietMenuId) == null)
-                            {
-                                _dbContext.DietDayMenus.Remove(menus);
-                            };
+                            deleteMenus.Add(currentMenu);
                         }
                     }
+                }
+                foreach (var deleteMenu in deleteMenus)
+                {
+                    _dbContext.DietDayMenus.Remove(deleteMenu);
+                    currentDiet.dietDayModel.First(x => x.dietDayId == deleteMenu.dietDayId).dietMenus.Remove(deleteMenu);
                 }
                 _dbContext.Diets!.UpdateRange(currentDiet);
                 _dbContext.SaveChanges();

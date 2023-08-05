@@ -1,5 +1,4 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AlgoritmikAPI_ClassApp.Models
@@ -16,5 +15,6 @@ namespace AlgoritmikAPI_ClassApp.Models
         public bool isCompleted { get; set; }
         [ForeignKey("dietDayId")]
         public virtual DietDayModel? dietDayModel { get; set; }
+        public virtual int isDelete { get; set; }
     }
 }

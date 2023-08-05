@@ -3,43 +3,25 @@ using AlgoritmikAPI_ClassApp.Models;
 
 namespace AlgoritmikAPI_ClassApp.Repository
 {
-    public class NutritionistRepository : INutritionist
+    public class InviteRepository : IInvite
     {
         readonly DatabaseContext _dbContext = new();
 
-        public NutritionistRepository(DatabaseContext dbContext)
+        public InviteRepository(DatabaseContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public NutritionistModel GetNutritionist(int id)
+
+        public InviteModel GetInvite(string inviteCode)
         {
             try
             {
-                NutritionistModel? nutritionistModel = _dbContext.Nutritionist!.Find(id);
-                if (nutritionistModel != null)
+                InviteModel? invite = _dbContext.Invites!.Find(inviteCode);
+                if (invite != null)
                 {
 
-                    return nutritionistModel;
-                }
-                else
-                {
-                    throw new ArgumentNullException();
-                }
-            }
-            catch
-            {
-                throw;
-            }
-        }
-        public NutritionistModel GetNutritionistWithUserId(int id)
-        {
-            try
-            {
-                NutritionistModel nutritionistModel = _dbContext.Nutritionist!.Single(x => x.userId.Equals(id));
-                if (nutritionistModel != null)
-                {
-                    return nutritionistModel;
+                    return invite;
                 }
                 else
                 {
@@ -52,11 +34,31 @@ namespace AlgoritmikAPI_ClassApp.Repository
             }
         }
 
-        public void UpdateNutritionist(NutritionistModel nutritionistModel)
+        public List<InviteModel> GetInvites(int nutritionistId)
         {
             try
             {
-                _dbContext.Nutritionist!.Update(nutritionistModel);
+                List<InviteModel> inviteModels = _dbContext.Invites!.Where(x => x.inviteNutritionistId.Equals(nutritionistId)).ToList();
+                if (inviteModels != null)
+                {
+                    return inviteModels;
+                }
+                else
+                {
+                    throw new ArgumentNullException();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public void AddInvite(InviteModel inviteModel)
+        {
+            try
+            {
+                _dbContext.Invites!.Add(inviteModel);
                 _dbContext.SaveChanges();
             }
             catch
@@ -64,14 +66,6 @@ namespace AlgoritmikAPI_ClassApp.Repository
                 throw;
             }
         }
-
-
-
-        public bool CheckNutritionist(int id)
-        {
-            return _dbContext.Nutritionist.Any(e => e.nutritionistId == id);
-        }
-
 
     }
 }

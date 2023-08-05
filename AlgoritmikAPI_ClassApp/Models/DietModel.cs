@@ -12,6 +12,7 @@ namespace AlgoritmikAPI_ClassApp.Models
         public string dietTitle { get; set; }
         public DateTime? dietStartDate { get; set; }
         public DateTime? dietEndDate { get; set; }
+        public string? imageData { get; set; }
         public List<DietDayModel>? dietDayModel { get; set; }
         [ForeignKey("nutritionistId")]
         public virtual NutritionistModel? nutritionistModel { get; set; }

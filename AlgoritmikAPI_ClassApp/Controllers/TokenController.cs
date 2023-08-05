@@ -36,8 +36,6 @@ namespace AlgoritmikAPI_ClassApp.Controllers
                         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                         new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                         new Claim("UserId", user.UserId.ToString()),
-                        new Claim("DisplayName", user.DisplayName),
-                        new Claim("UserName", user.UserName),
                         new Claim("Email", user.Email)
                     };
 

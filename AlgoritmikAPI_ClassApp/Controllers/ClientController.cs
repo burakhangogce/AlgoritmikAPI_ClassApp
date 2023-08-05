@@ -38,9 +38,28 @@ namespace AlgoritmikAPI_ClassApp.Controllers
                 response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
                 return response;
             }
-
         }
 
+
+        [HttpGet("getClientWithUserId/{id}")]
+        public async Task<ActionResult<ClientResponseModel>> GetClientWithUserId(int id)
+        {
+            ResponseModel responseModel = new ResponseModel(isSuccess: true, statusCode: 200, errorModel: null);
+            var response = new ClientResponseModel(responseModel: responseModel);
+            try
+            {
+                ClientModel client = await Task.FromResult(_IClient.GetClientWithUserId(id));
+                response.models.Add(client);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.statusCode = 400;
+                response.isSuccess = false;
+                response.errorModel = new ErrorResponseModel(errorMessage: ex.Message);
+                return response;
+            }
+        }
 
         [HttpGet("myclients/{id}")]
         public async Task<ActionResult<ClientResponseModel>> GetMyClients(int id)

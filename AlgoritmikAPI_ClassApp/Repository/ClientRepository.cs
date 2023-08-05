@@ -34,7 +34,25 @@ namespace AlgoritmikAPI_ClassApp.Repository
             }
         }
 
-
+        public ClientModel GetClientWithUserId(int id)
+        {
+            try
+            {
+                ClientModel clientModel = _dbContext.Client!.Single(x => x.userId.Equals(id));
+                if (clientModel != null)
+                {
+                    return clientModel;
+                }
+                else
+                {
+                    throw new ArgumentNullException();
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
         public List<ClientModel> GetMyClients(int id)
         {
